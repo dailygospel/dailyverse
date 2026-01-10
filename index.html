@@ -10,7 +10,6 @@
     
     <style>
         :root {
-            /* Restored the slightly darker glass for contrast */
             --glass-bg: rgba(20, 20, 20, 0.65);
             --glass-border: rgba(255, 255, 255, 0.15);
             --text-color: #f0f0f0;
@@ -20,7 +19,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
 
         body {
-            /* Restored original font stack */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
             display: flex;
@@ -34,7 +32,6 @@
             color: var(--text-color);
         }
 
-        /* Dynamic Overlays */
         .overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -47,13 +44,12 @@
             background: rgba(0,0,0,0.65);
         }
 
-        /* Top Bar (Just Mood Selector now) */
         .top-bar {
             position: absolute;
             top: 20px;
             width: 100%;
             display: flex;
-            justify-content: center; /* Centered since streak is gone */
+            justify-content: center;
             z-index: 20;
         }
 
@@ -71,7 +67,6 @@
         
         select.mood-selector option { background: #333; color: white; }
 
-        /* Main Card */
         .card {
             position: relative;
             z-index: 10;
@@ -91,7 +86,6 @@
             animation: fadeIn 0.8s ease-out;
         }
 
-        /* Heart Icon */
         .fav-btn {
             position: absolute;
             top: 25px;
@@ -114,7 +108,6 @@
         }
 
         #verse-text {
-            /* Restored Georgia for the verse text */
             font-family: 'Georgia', serif;
             font-size: 1.6rem;
             line-height: 1.5;
@@ -129,7 +122,6 @@
             letter-spacing: 1px;
         }
 
-        /* Controls */
         .buttons {
             display: flex;
             justify-content: center;
@@ -143,7 +135,7 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 12px 22px;
-            border-radius: 50px; /* Round buttons back */
+            border-radius: 50px;
             cursor: pointer;
             font-size: 0.9rem;
             font-weight: 500;
@@ -158,7 +150,6 @@
             transform: translateY(-2px);
         }
 
-        /* Refresh Button (Subtle) */
         .refresh-container {
             margin-top: 10px;
         }
@@ -173,10 +164,55 @@
         }
         .refresh-text:hover { color: #fff; }
 
-        /* Floating UI Elements */
-        .sound-toggle, .view-favs-btn {
+        /* --- NEW MUSIC PLAYER UI --- */
+        .music-player {
             position: fixed;
             bottom: 20px;
+            left: 20px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s, transform 0.2s;
+            padding: 5px;
+        }
+
+        .music-btn:hover {
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .play-pause-btn {
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            padding: 0;
+        }
+
+        .view-favs-btn {
+            position: fixed;
+            bottom: 20px;
+            /* Moved slightly right to not overlap player */
+            left: 170px; 
             z-index: 20;
             background: rgba(0,0,0,0.6);
             border: 1px solid rgba(255,255,255,0.2);
@@ -188,10 +224,7 @@
             transition: background 0.3s;
         }
         
-        .sound-toggle:hover, .view-favs-btn:hover { background: rgba(0,0,0,0.8); }
-
-        .sound-toggle { left: 20px; }
-        .view-favs-btn { left: 75px; }
+        .view-favs-btn:hover { background: rgba(0,0,0,0.8); }
 
         .footer-note {
             position: fixed;
@@ -204,7 +237,6 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
-        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -235,7 +267,6 @@
             color: #ff6b6b; font-size: 0.75rem; cursor: pointer; margin-top: 8px; display: inline-block;
         }
 
-        /* Loader */
         .spinner {
             border: 3px solid rgba(255,255,255,0.3);
             border-top: 3px solid #fff;
@@ -248,15 +279,16 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Responsive */
         @media (max-width: 600px) {
             .card { padding: 30px 20px; width: 95%; }
             #verse-text { font-size: 1.35rem; }
             .buttons { flex-direction: column; align-items: stretch; }
             button.action-btn { justify-content: center; }
             .footer-note { bottom: 10px; right: 0; width: 100%; text-align: center; }
-            .sound-toggle { bottom: 60px; left: 20px; }
-            .view-favs-btn { bottom: 115px; left: 20px; }
+            
+            /* Responsive adjustments for bottom controls */
+            .music-player { bottom: 60px; left: 50%; transform: translateX(-50%); width: 200px; justify-content: space-between; }
+            .view-favs-btn { bottom: 120px; left: 20px; }
         }
     </style>
 </head>
@@ -308,9 +340,19 @@
         </div>
     </div>
 
-    <button class="sound-toggle" onclick="toggleSound()" title="Toggle Ambience">
-        <svg id="sound-icon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
-    </button>
+    <div class="music-player">
+        <button class="music-btn" onclick="prevSong()" title="Previous">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+        </button>
+        <button class="music-btn play-pause-btn" onclick="togglePlay()" title="Play/Pause">
+            <svg id="play-icon" width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="pause-icon" width="20" height="20" fill="currentColor" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="music-btn" onclick="nextSong()" title="Next">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </button>
+    </div>
+
     <button class="view-favs-btn" onclick="openFavModal()" title="View Favorites">
         <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
     </button>
@@ -325,14 +367,19 @@
         </div>
     </div>
 
-    <audio id="ambient-audio" loop>
-        <source src="https://image2url.com/r2/bucket1/audio/1768012634348-a55d7f01-e978-4054-85ee-323c4a6e0ff6.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="ambient-audio"></audio>
 
     <script>
         // CONFIG
         const REFRESH_HOURS = 12;
         const BG_KEYWORDS = ['forest', 'mountain', 'lake', 'fog', 'stars', 'ocean'];
+        
+        // --- PLAYLIST CONFIG ---
+        const PLAYLIST = [
+            "https://image2url.com/r2/bucket1/audio/1768012634348-a55d7f01-e978-4054-85ee-323c4a6e0ff6.mp3",
+            "https://image2url.com/r2/bucket1/audio/1768056760890-3d4c2564-9ce6-4b55-9f27-6ab52b00335d.mp3",
+            "https://image2url.com/r2/bucket2/audio/1768056781416-b5e094dc-0d20-47c2-84df-d8f94e8e04f7.mp3"
+        ];
         
         // MOOD LIBRARY
         const MOODS = {
@@ -359,13 +406,13 @@
         const verseTextEl = document.getElementById('verse-text');
         const verseRefEl = document.getElementById('verse-reference');
         const favBtn = document.getElementById('fav-btn');
-        const soundIcon = document.getElementById('sound-icon');
         let currentVerse = {};
 
         function init() {
             setRandomBackground();
             checkNightMode();
             handleVerseLogic();
+            setupAudio(); 
             window.speechSynthesis.getVoices();
         }
 
@@ -389,14 +436,11 @@
         // --- 2. VERSE LOGIC ---
         async function handleVerseLogic() {
             const mood = document.getElementById('mood-select').value;
-
-            // If a specific mood is selected, bypass the API and Timer
             if (mood !== 'random') {
                 loadMoodVerse(mood);
                 return;
             }
 
-            // Standard "Daily Random" Logic
             const now = Date.now();
             const storedData = localStorage.getItem('dailyVerseData');
             const storedTime = localStorage.getItem('dailyVerseTime');
@@ -420,7 +464,6 @@
                 const cleanText = data.text.replace(/\n/g, ' ').trim();
                 const verseData = { text: cleanText, reference: data.reference };
                 
-                // Save only if we are in random mode
                 if(document.getElementById('mood-select').value === 'random') {
                     localStorage.setItem('dailyVerseData', JSON.stringify(verseData));
                     localStorage.setItem('dailyVerseTime', Date.now());
@@ -469,7 +512,6 @@
         function openChapter() {
             const ref = verseRefEl.textContent; 
             if (!ref) return;
-            // Split verse from chapter (e.g. John 3:16 -> John 3)
             let chapterRef = ref.includes(':') ? ref.split(':')[0] : ref;
             const url = `https://www.biblegateway.com/passage/?search=${encodeURIComponent(chapterRef)}&version=ESV`;
             window.open(url, '_blank');
@@ -479,7 +521,6 @@
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(`${currentVerse.reference}. ${currentVerse.text}`);
             let voices = window.speechSynthesis.getVoices();
-            // Human-like voice selection
             let v = voices.find(v => v.name.includes("Google US English")) || 
                     voices.find(v => v.name.includes("Samantha")) || 
                     voices.find(v => v.name.includes("Zira"));
@@ -558,19 +599,55 @@
             updateFavIcon();
         }
 
-        // --- 5. SOUND & TIMER ---
+        // --- 5. AUDIO SYSTEM WITH UI ---
         let isPlaying = false;
-        function toggleSound() {
-            const audio = document.getElementById('ambient-audio');
+        let trackIndex = 0;
+        const audio = document.getElementById('ambient-audio');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+
+        function setupAudio() {
+            trackIndex = Math.floor(Math.random() * PLAYLIST.length);
+            audio.src = PLAYLIST[trackIndex];
+            audio.volume = 0.3;
+
+            // Auto-next logic
+            audio.onended = function() {
+                nextSong();
+            };
+        }
+
+        function togglePlay() {
             if (isPlaying) {
                 audio.pause();
-                soundIcon.style.opacity = "0.5";
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
             } else {
-                audio.volume = 0.3;
-                audio.play().catch(e => alert("Interact with the page first to play audio."));
-                soundIcon.style.opacity = "1";
+                audio.play().catch(e => alert("Click page first to allow audio."));
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
             }
             isPlaying = !isPlaying;
+        }
+
+        function nextSong() {
+            trackIndex = (trackIndex + 1) % PLAYLIST.length;
+            loadTrack();
+        }
+
+        function prevSong() {
+            // Logic to wrap around to the end if at the start
+            trackIndex = (trackIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
+            loadTrack();
+        }
+
+        function loadTrack() {
+            audio.src = PLAYLIST[trackIndex];
+            // If it was already playing, keep playing. If not, auto-play because user clicked next/prev.
+            audio.play().catch(e => console.log("Auto-play blocked until interaction"));
+            isPlaying = true;
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
         }
 
         function startTimer(startTime) {
